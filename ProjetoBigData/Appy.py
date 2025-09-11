@@ -2,12 +2,15 @@ import pandas as pd
 import numpy as np
 import pyspark 
 from pyspark.sql import SparkSession
+#Bibliotecas 
 
-sc = SparkSession.builder.master('local[*]').getOrCreate()
+#criando sessao do spark
+spark = SparkSession.builder.master('local[*]').getOrCreate()
 
-sc
+spark
 
-dados_roubos = sc.read.csv(
+#lendo o arquivo csv como um dataframe
+dados_roubos = spark.read.csv(
 path = "RouboRJ.csv",
 inferSchema= True,
 header= True,
@@ -17,5 +20,6 @@ encoding= "UTF-8"
 
 type(dados_roubos)
 
+#Exibir primeiras linhas
 dados_roubos.show()
 
