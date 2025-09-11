@@ -17,3 +17,7 @@ Este projeto tem como objetivo realizar uma análise de dados sobre incidências
 - Pandas
 
 - Matplotlib
+
+## Referências
+
+Dados dos Roubos: https://www.data.rio/documents/4fb0316436ad474f96bb0079e2256e07/about
