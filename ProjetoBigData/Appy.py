@@ -1,32 +1,41 @@
 import pandas as pd
+import numpy as np
+import pyspark 
 import pyspark
+from pyspark.ml.regression import LinearRegression
 from pyspark.sql import SparkSession
-#Bibliotecas
+from pyspark.ml.feature import VectorAssembler
+from pyspark.sql.functions import col
+#Bibliotecas 
 
-# Criando sessao do Spark
-spark = SparkSession.builder.master("local[*]").getOrCreate()
+# criando sessao do spark
+spark = SparkSession.builder.master('local[*]').getOrCreate()
 
-# Lê o arquivo e pula as 6 primeiras linhas
-df_pandas = pd.read_csv("2295.csv", sep=",", encoding="UTF-8", skiprows=6)
+spark
+# le o arquivo e pula as 6 primeiras linhas
+df_roubos = pd.read_csv("2295.csv", sep=",", encoding="UTF-8", skiprows=6)
 
 # Renomeando a primeira coluna
-df_pandas.rename(columns={df_pandas.columns[0]: "Ano"}, inplace=True)
+df_roubos.rename(columns={df_roubos.columns[0]: "Ano"}, inplace=True)
 
 # Converte a coluna Ano e so seliciona linhas com valores validos
-df_pandas = df_pandas[pd.to_numeric(df_pandas["Ano"], errors="coerce").notnull()]
+df_roubos = df_roubos[pd.to_numeric(df_roubos["Ano"], errors="coerce").notnull()]
 
-# Lista dos meses 
-meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+#Remove os espacos e converte para int
+df_roubos["Total2"] = df_roubos["Total2"].str.replace(" ", "").astype(int)
 
-# Limpa espacos e converte para int todas as colunas
-for roubos in meses:
-    df_pandas[roubos] = df_pandas[roubos].astype(str).str.replace(" ", "").replace("", "0")
-    df_pandas[roubos] = pd.to_numeric(df_pandas[roubos], errors="coerce").fillna(0).astype(int)
+#Seleciona apenas os Anos e os valores totais de roubo de cada ano
+dados_RPA = spark.createDataFrame(df_roubos[["Ano", "Total2"]])
 
-# Seleciona apenas Ano e meses
-dados = spark.createDataFrame(df_pandas[["Ano"] + meses])
+dados_RPA.show(25)
 
-# Exibe as 25 primeiras linhas
-dados.show(25)
+dados_RPA = dados_RPA.withColumn("Ano", col("Ano").cast("int"))
 
-dados.printSchema()
+assembler = VectorAssembler(inputCols=["Ano"], outputCol="Ano_Vector")
+df_vetorizado = assembler.transform(dados_RPA).select("Ano_Vector", "Total2")
+
+lr = LinearRegression(featuresCol="Ano_Vector", labelCol="Total2")
+modelo = lr.fit(df_vetorizado)
+
+print("Coeficiente Angular (W)", modelo.coefficients[0])
+print("Intercepto (b)", modelo.intercept)
