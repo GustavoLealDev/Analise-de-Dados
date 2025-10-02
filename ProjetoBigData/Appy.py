@@ -1,11 +1,9 @@
 import pandas as pd
-import numpy as np
-import pyspark 
-import pyspark
 from pyspark.ml.regression import LinearRegression
 from pyspark.sql import SparkSession
 from pyspark.ml.feature import VectorAssembler
 from pyspark.sql.functions import col
+import matplotlib.pyplot as plt 
 #Bibliotecas 
 
 # criando sessao do spark
@@ -13,7 +11,10 @@ spark = SparkSession.builder.master('local[*]').getOrCreate()
 
 spark
 # le o arquivo e pula as 6 primeiras linhas
-df_roubos = pd.read_csv("2295.csv", sep=",", encoding="UTF-8", skiprows=6)
+df_roubos = pd.read_csv("https://raw.githubusercontent.com/GustavoLealDev/Analise-de-Dados/main/ProjetoBigData/2295.csv", 
+                        sep=",", 
+                        encoding="UTF-8", 
+                        skiprows=6)
 
 # Renomeando a primeira coluna
 df_roubos.rename(columns={df_roubos.columns[0]: "Ano"}, inplace=True)
@@ -39,3 +40,19 @@ modelo = lr.fit(df_vetorizado)
 
 print("Coeficiente Angular (W)", modelo.coefficients[0])
 print("Intercepto (b)", modelo.intercept)
+
+dados_pd = dados_RPA.toPandas().sort_values(by="Ano")
+
+X = dados_pd["Ano"].values
+y = dados_pd["Total2"].values
+
+y_pred = modelo.coefficients * X + modelo.intercept
+
+plt.scatter(X, y, label="Dados Originais")
+plt.plot(X, y_pred, color="red", linewidth=2, label="Linha de Regressão")
+plt.xlabel("Ano")
+plt.ylabel("Quantidade de Roubos por Ano")
+plt.legend()
+plt.title("Regressão Linear Simples")
+plt.grid(True)
+plt.show()
