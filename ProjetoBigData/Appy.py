@@ -56,3 +56,9 @@ plt.legend()
 plt.title("Regressão Linear Simples")
 plt.grid(True)
 plt.show()
+
+media = dados_pd["Total2"].mean()
+print(f"Média de roubos por ano: {media:.0f}")
+
+desvio_padrao = dados_pd["Total2"].std()
+print(f"Desvio padrão dos roubos: {desvio_padrao:.0f}")
