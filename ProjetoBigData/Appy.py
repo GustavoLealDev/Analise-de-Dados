@@ -62,3 +62,8 @@ print(f"Média de roubos por ano: {media:.0f}")
 
 desvio_padrao = dados_pd["Total2"].std()
 print(f"Desvio padrão dos roubos: {desvio_padrao:.0f}")
+
+faixas = pd.cut(dados_pd["Total2"],bins=5)
+tabela_freq = dados_pd["Total2"].groupby(faixas).count().reset_index(name="Frequência")
+print("Tabela de Frequência")
+print(tabela_freq)
