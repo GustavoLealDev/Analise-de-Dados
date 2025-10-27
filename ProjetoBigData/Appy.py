@@ -64,6 +64,14 @@ desvio_padrao = dados_pd["Total2"].std()
 print(f"Desvio padrão dos roubos: {desvio_padrao:.0f}")
 
 faixas = pd.cut(dados_pd["Total2"],bins=5)
-tabela_freq = dados_pd["Total2"].groupby(faixas).count().reset_index(name="Frequência")
-print("Tabela de Frequência")
-print(tabela_freq)
+tabela_freq = dados_pd["Total2"].groupby(faixas, observed=False).count().reset_index(name="Frequência")
+
+plt.figure(figsize=(8, 5))
+plt.bar(tabela_freq["Total2"].astype(str), tabela_freq["Frequência"], color="skyblue", edgecolor="black")
+plt.xlabel("Faixas de Quantidade de Roubos")
+plt.ylabel("Frequência")
+plt.title("Distribuição de Frequência dos Roubos por Faixas")
+plt.xticks(rotation=45)
+plt.grid(axis="y", linestyle="--", alpha=0.7)
+plt.show()
+
