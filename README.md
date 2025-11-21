@@ -20,4 +20,6 @@ Este projeto tem como objetivo realizar uma análise de dados sobre incidências
 
 ## 📒 Referências
 
+Slides de Apresentação: https://prezi.com/p/edit/mynggs64q4vg
+
 Base de dados: https://www.data.rio/documents/4fb0316436ad474f96bb0079e2256e07/about
